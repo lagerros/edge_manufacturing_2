@@ -187,12 +187,17 @@
 
       #print-button {
           margin-top: 20px;
-          width: 50%;
+          width: 30%;
+          font-size: 25px;
           padding: 10px;
           background-color: var(--font-color);
           color: var(--background-color);
           border: none;
           cursor: pointer;
+      }
+
+      #print-button:hover {
+          opacity: 0.6;
       }
 
       label.image-upload-button {
@@ -213,7 +218,7 @@
       }
   </style>
     <script>
-      ADMIN_MODE = true
+      ADMIN_MODE = false
 
 
       
@@ -304,22 +309,22 @@
         //       });
         //   });
         
-        document.querySelector('form').addEventListener('submit', function(e) {
-          e.preventDefault();
-          const formData = new FormData(this);
-          fetch('/submit', {
-            method: 'POST',
-            body: formData,
-          })
-          .then(response => response.json())
-          .then(data => {
-            console.log("returned!"); 
-            console.log(data); 
-            displayResult(data.fileName);
-            document.getElementById('status').innerText = 'Submitted'; // This text will be replaced by the download icon once the response is received
-          })
-          .catch(error => console.error('Error:', error));
-        });
+        // document.querySelector('form').addEventListener('submit', function(e) {
+        //   e.preventDefault();
+        //   const formData = new FormData(this);
+        //   fetch('/submit', {
+        //     method: 'POST',
+        //     body: formData,
+        //   })
+        //   .then(response => response.json())
+        //   .then(data => {
+        //     console.log("returned!"); 
+        //     console.log(data); 
+        //     displayResult(data.fileName);
+        //     document.getElementById('status').innerText = 'Submitted'; // This text will be replaced by the download icon once the response is received
+        //   })
+        //   .catch(error => console.error('Error:', error));
+        // });
         
         // Open modal function
         function openModal(part) {
@@ -382,36 +387,39 @@
                 .catch(error => console.error('Error:', error));
         });
 
-        document.getElementById('uploadCsvButton').addEventListener('click', function() {
-            
+        if (ADMIN_MODE) {
+          document.getElementById('uploadCsvButton').addEventListener('click', function() {
 
-            const input = document.getElementById('csvFileInput');
-            if (!input.files.length) {
-                alert('Please select a file.');
-                return;
-            }
-            const file = input.files[0];
-            if (!file.type.match('text/csv')) {
-                alert('Please select a CSV file.');
-                return;
-            }
-            const formData = new FormData();
-            formData.append('csv_file', file);
 
-            fetch('/upload_csv', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                alert('CSV upload successful.');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while uploading the CSV.');
-            });
-        });
+              const input = document.getElementById('csvFileInput');
+              if (!input.files.length) {
+                  alert('Please select a file.');
+                  return;
+              }
+              const file = input.files[0];
+              if (!file.type.match('text/csv')) {
+                  alert('Please select a CSV file.');
+                  return;
+              }
+              const formData = new FormData();
+              formData.append('csv_file', file);
+
+              fetch('/upload_csv', {
+                  method: 'POST',
+                  body: formData,
+              })
+              .then(response => response.json())
+              .then(data => {
+                  console.log(data);
+                  alert('CSV upload successful.');
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  alert('An error occurred while uploading the CSV.');
+              });
+          });
+        }
+        
 
         
 
@@ -452,10 +460,10 @@
 <body>
     
     <div id="company-name">edge</div>
-    <form id="csvUploadForm">
+    <!-- <form id="csvUploadForm">
         <input type="file" id="csvFileInput" accept=".csv">
         <button type="button" id="uploadCsvButton">Upload CSV</button>
-    </form>
+    </form> -->
       <!-- <form action="/submit" method="post">
           <input type="text" name="prompt" placeholder="Enter your design prompt">
           <input type="file" accept="image/*" id="imageInput" name="image" capture="capture" />
@@ -468,8 +476,8 @@
         <button type="submit">Search</button>
     </form>
     <div id="searchResults"></div>
-      <a href="/parts" id="all-parts-link">All parts</a>
-      <div id="status"></div>
+      <!-- <a href="/parts" id="all-parts-link">All parts</a>
+      <div id="status"></div> -->
       <div id="result"></div>
       <div id="searchMessage"> </div>
       <div id="searchTableContainer">
@@ -492,7 +500,7 @@
             <h2 id="modal-title">Part Title</h2>
             <div class="modal-body">
                 <p id="modal-description">Part Description</p>
-                <img id="modal-image" src="" alt="Part Image" style="width:100px; height:auto;">
+                <img id="modal-image" src="" alt="Part Image">
                 
             </div>
           <!-- <div id="modal-files">Files:</div> -->
