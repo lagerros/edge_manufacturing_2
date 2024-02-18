@@ -6,7 +6,7 @@ import re
 import random
 from config import ProductionConfig  # Or whichever config you want to use
 from models import Part
-import pandas as pd
+#import pandas as pd
 import requests
 
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
@@ -130,7 +130,7 @@ def submit():
 
 @app.route('/download/<filename>')
 def download_file(filename):
-  return send_from_directory(directory=".", path=filename, as_attachment=True)
+  return send_from_directory(directory="./print", path=filename, as_attachment=True)
 
 
 @app.route('/parts', methods=['GET'])
@@ -187,26 +187,26 @@ def search():
     return jsonify_parts(results)
 
 
-@app.route('/upload_csv', methods=['POST'])
-def upload_csv():
-    if 'csv_file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    file = request.files['csv_file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    if file and file.filename.endswith('.csv'):
-        df = pd.read_csv(file, keep_default_na=False)  # keep_default_na=False prevents pandas from converting empty strings to NaN
-        for _, row in df.iterrows():
-            # Use .get() with a default of None for optional columns
-            createOrUpdatePart(
-                name=row.get('name'),
-                description=row.get('description', None),
-                img_filename=row.get('img_filename', None),
-                stl_filename=row.get('stl_filename', None)
-            )
-        return jsonify({'message': 'CSV processed successfully'}), 200
-    else:
-        return jsonify({'error': 'Invalid file format'}), 400
+# @app.route('/upload_csv', methods=['POST'])
+# def upload_csv():
+#     if 'csv_file' not in request.files:
+#         return jsonify({'error': 'No file part'}), 400
+#     file = request.files['csv_file']
+#     if file.filename == '':
+#         return jsonify({'error': 'No selected file'}), 400
+#     if file and file.filename.endswith('.csv'):
+#         df = pd.read_csv(file, keep_default_na=False)  # keep_default_na=False prevents pandas from converting empty strings to NaN
+#         for _, row in df.iterrows():
+#             # Use .get() with a default of None for optional columns
+#             createOrUpdatePart(
+#                 name=row.get('name'),
+#                 description=row.get('description', None),
+#                 img_filename=row.get('img_filename', None),
+#                 stl_filename=row.get('stl_filename', None)
+#             )
+#         return jsonify({'message': 'CSV processed successfully'}), 200
+#     else:
+#         return jsonify({'error': 'Invalid file format'}), 400
 
 @app.route('/parts/delete/<int:part_id>', methods=['POST'])
 def delete_part(part_id):
@@ -233,7 +233,7 @@ def print_gcode(gcode_path):
 
     payload = {'command': 'select', 'print': True}
     headers = {'Content-Type': 'application/json', 'X-Api-Key': app.config['OCTOPRINT_API_KEY']}
-    response = requests.post(f'{app.config["OCTOPRINT_URL"]}/api/files/local/{disk_gcode_path.name}', json=payload, headers=headers)
+    response = requests.post(f'{app.config["OCTOPRINT_URL"]}/api/files/local/{gcode_path}', json=payload, headers=headers)
 
     print('\n\n\n\n\n', response.status_code, '\n\n\n\n\n')
 
@@ -243,5 +243,9 @@ def print_gcode(gcode_path):
     else:
         print('Error starting print job:', response.text)
         return 'error', 500
+
+
+
+
 
 app.run(host='0.0.0.0', port=8080)
