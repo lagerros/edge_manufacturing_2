@@ -14,7 +14,7 @@ from kittycad.models.api_call_status import ApiCallStatus
 from kittycad.models.file_export_format import FileExportFormat
 from kittycad.models.text_to_cad_create_body import TextToCadCreateBody
 
-from database import createPart, db 
+from extensions import db
 
 # Create our client.
 token = os.environ["KITTYCAD_API_TOKEN"]
