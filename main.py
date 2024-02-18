@@ -24,6 +24,8 @@ client = ClientFromEnv(token=token, timeout=30, verify_ssl=True)
 app = Flask('app')
 app.config.from_object(ProductionConfig)
 
+db.init_app(app)
+
 class ModelInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_prompt = db.Column(db.String(120), unique=True, nullable=False)

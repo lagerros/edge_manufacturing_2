@@ -5,6 +5,9 @@ from models import Part  # Adjust the import path based on your project structur
 from extensions import db
 
 
+
+## One time script for creating the db. Don't call from elsewhere 
+
 app = Flask(__name__)
 app.config.from_object(ProductionConfig)
 
