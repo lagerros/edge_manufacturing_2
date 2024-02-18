@@ -95,6 +95,72 @@
           width: 50px;
           height: auto;
       }
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      .modal-content {
+          background-color: #2a2a2a; /* Slightly brighter than --background-color */
+          margin: 15% auto; /* 15% from the top and centered */
+          padding: 20px;
+          border: 1px solid var(--font-color); /* Border color */
+          width: 80%; /* Could be more or less, depending on screen size */
+      }
+
+      .close-button {
+          color: var(--font-color);
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+      }
+
+      .close-button:hover,
+      .close-button:focus {
+          color: #000;
+          text-decoration: none;
+          cursor: pointer;
+      }
+
+      #modal-title {
+          font-size: 24px; /* Larger font for the title */
+      }
+
+      .modal-body {
+          margin: 10px 0;
+          display: flex;
+          align-items: center;
+      }
+
+      #modal-image {
+          margin-right: 20px;
+      }
+
+      #modal-files {
+          margin-top: 20px;
+      }
+
+      #modal-files ul {
+          list-style-type: none;
+      }
+
+      #print-button {
+          margin-top: 20px;
+          width: 100%;
+          padding: 10px;
+          background-color: var(--font-color);
+          color: var(--background-color);
+          border: none;
+          cursor: pointer;
+      }
   </style>
     <script>
 
@@ -134,6 +200,8 @@
                 if (part?.stl_filename) {
                   downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`
                 }
+                
+                row.addEventListener('click', () => openModal(part));
                  
               });
           });
@@ -154,25 +222,53 @@
           })
           .catch(error => console.error('Error:', error));
         });
+        
+        // Open modal function
+        function openModal(part) {
+            document.getElementById('modal-title').textContent = part.name;
+            document.getElementById('modal-description').textContent = part.description;
+            document.getElementById('modal-image').src = `/path/to/image/${part.img_filename}`;
+            let filesList = 'Files: <ul>';
+            if (part.stl_filename) {
+                filesList += `<li>${part.stl_filename}</li>`;
+            }
+            // Add more file types here if needed
+            filesList += '</ul>';
+            document.getElementById('modal-files').innerHTML = filesList;
+            document.getElementById('modal').style.display = "block";
+        }
+
+        // Close modal when the user clicks on <span> (x)
+        document.querySelector('.close-button').onclick = function() {
+            document.getElementById('modal').style.display = "none";
+        }
+
+        // Close modal if the user clicks anywhere outside of it
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('modal')) {
+                document.getElementById('modal').style.display = "none";
+            }
+        }
       });
   
-      function displayResult(fileName) {
-        const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = `<a href="/download/${fileName}" download><img src="icon.png" alt="Download File"/></a>`;
-      }
+
+      
+      document.getElementById('print-button').addEventListener('click', function() {
+          window.print();
+      });
     </script>
 </head>
 <body>
     
     <div id="company-name">edge</div>
-    <form action="/submit" method="post">
-        <input type="text" name="prompt" placeholder="Enter your design prompt">
-        <button type="submit">Submit</button>
-    </form>
-    <a href="/parts" id="all-parts-link">All parts</a>
-    <div id="status"></div>
-    <div id="result"></div>
-    <div id="partsTableContainer">
+      <form action="/submit" method="post">
+          <input type="text" name="prompt" placeholder="Enter your design prompt">
+          <button type="submit">Submit</button>
+      </form>
+      <a href="/parts" id="all-parts-link">All parts</a>
+      <div id="status"></div>
+      <div id="result"></div>
+      <div id="partsTableContainer">
       <table id="partsTable">
           <thead>
               <tr>
@@ -186,6 +282,19 @@
               <!-- Parts will be dynamically inserted here -->
           </tbody>
       </table>
+      
+      <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="modal-title">Part Title</h2>
+            <div class="modal-body">
+                <img id="modal-image" src="" alt="Part Image" style="width:100px; height:auto;">
+                <p id="modal-description">Part Description</p>
+            </div>
+            <div id="modal-files">Files:</div>
+            <button id="print-button">Print</button>
+        </div>
+    </div>
   </div>
 
 </body>
