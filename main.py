@@ -133,7 +133,7 @@ def search_parts(query_str):
 
 
       query = parser.parse(query_str+"*")
-      print(query)
+    # TODO: improve query
       results = searcher.search(query, limit=None)
 
       # Extract necessary data within the context manager
@@ -152,7 +152,6 @@ def search():
     query_str = request.args.get('query')
     print(f"Received search query: {query_str}")
     results = search_parts(query_str)
-    print(results)
     # Convert results to a list of dictionaries with 'name' and 'description'
     results_json = [{'name': result["name"], 'description': result["description"]} for result in results]
     return jsonify(results_json)
