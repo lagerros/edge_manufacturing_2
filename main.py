@@ -1,8 +1,11 @@
 import os
 import time
 from flask import Flask, render_template, request, send_from_directory, jsonify
+from flask_sqlalchemy import SQLAlchemy
 import re
 import random
+from config import ProductionConfig  # Or whichever config you want to use
+
 
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
 from kittycad.client import ClientFromEnv
@@ -16,7 +19,18 @@ token = os.environ["KITTYCAD_API_TOKEN"]
 client = ClientFromEnv(token=token, timeout=30, verify_ssl=True)
 
 app = Flask('app')
+app.config.from_object(ProductionConfig)
 
+db = SQLAlchemy(app)
+
+class ModelInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_prompt = db.Column(db.String(120), unique=True, nullable=False)
+    file_name = db.Column(db.String(120), unique=True, nullable=False)
+    status = db.Column(db.String(20), nullable=False)
+
+    def __repr__(self):
+        return f'<ModelInfo {self.user_prompt}>'
 
 @app.route('/')
 def index():
