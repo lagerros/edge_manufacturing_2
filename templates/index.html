@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text to CAD</title>
+    <script>
+      document.querySelector('form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          fetch('/submit', {
+              method: 'POST',
+              body: formData,
+          })
+          .then(response => response.json())
+          .then(data => displayResult(data.fileName))
+          .catch(error => console.error('Error:', error));
+      });
+  </script>
+</head>
+<body>
+    <form action="/submit" method="post">
+        <input type="text" name="prompt" placeholder="Enter your design prompt">
+        <button type="submit">Submit</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        function displayResult(fileName) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<a href="/download/${fileName}" download><img src="icon.png" alt="Download File"/></a>`;
+        }
+    </script>
+</body>
+</html>

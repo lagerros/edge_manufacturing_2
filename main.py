@@ -1,6 +1,6 @@
 import os
 import time
-from flask import Flask, render_template
+from flask import Flask, render_template, request, send_from_directory, jsonify
 
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
 from kittycad.client import ClientFromEnv
@@ -54,7 +54,22 @@ elif response.status == ApiCallStatus.COMPLETED:
 app = Flask('app')
 
 @app.route('/')
-def hello_world():
-  return 'Hello, World!'
+def index():
+    return render_template('index.html')
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    user_prompt = request.form['prompt']
+    # Existing code to call create_text_to_cad API with user_prompt
+    # Ensure you save the output file with a unique name, e.g., using a UUID
+    file_name = "unique_output_file_name_here.stl"  # Use actual logic to generate unique file names
+
+    # Assuming the rest of the code remains the same, including the file saving part
+    # After saving the file, return the file name to the client
+    return jsonify({'fileName': file_name})
+
+@app.route('/download/<filename>')
+def download_file(filename):
+    return send_from_directory(directory=".", path=filename, as_attachment=True)
 
 app.run(host='0.0.0.0', port=8080)
