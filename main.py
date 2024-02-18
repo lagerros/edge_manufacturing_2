@@ -14,7 +14,7 @@ from kittycad.models.api_call_status import ApiCallStatus
 from kittycad.models.file_export_format import FileExportFormat
 from kittycad.models.text_to_cad_create_body import TextToCadCreateBody
 
-from database import createPart 
+from database import createPart, db 
 
 # Create our client.
 token = os.environ["KITTYCAD_API_TOKEN"]
@@ -23,8 +23,6 @@ client = ClientFromEnv(token=token, timeout=30, verify_ssl=True)
 
 app = Flask('app')
 app.config.from_object(ProductionConfig)
-
-db = SQLAlchemy(app)
 
 class ModelInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -96,8 +94,8 @@ def download_file(filename):
 
 @app.route('/parts', methods=['GET'])
 def get_parts():
-    parts = Part.query.with_entities(Part.id, Part.name).all()
-    return jsonify([{'id': part.id, 'name': part.name} for part in parts])
+   parts = Part.query.with_entities(Part.id, Part.name).all()
+   return jsonify([{'id': part.id, 'name': part.name} for part in parts])
 
 @app.route('/parts/<int:part_id>', methods=['GET'])
 def get_part(part_id):
