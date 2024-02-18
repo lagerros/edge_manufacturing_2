@@ -58,6 +58,13 @@
           background-color: var(--background-color);
           border: 2px solid var(--font-color);
           color: var(--font-color);
+          transition: background-color 0.3s, color 0.3s; /* Smooth transition for background and text color */
+      }
+
+      button[type="submit"]:hover {
+          cursor: pointer; /* Changes the cursor to a pointer */
+          background-color: var(--font-color); /* Inverts the background color */
+          color: var(--background-color); /* Inverts the text color */
       }
 
       #all-parts-link {
@@ -68,6 +75,25 @@
 
       #all-parts-link:hover {
           opacity: 1;
+      }
+      
+      #partsTable {
+          border-collapse: collapse;
+          width: 100%;
+          margin-top: 20px;
+      }
+      #partsTable, #partsTable th, #partsTable td {
+          border: 1px solid var(--font-color);
+          text-align: left;
+          padding: 8px;
+      }
+      #partsTable th {
+          background-color: var(--background-color);
+          color: var(--font-color);
+      }
+      #partsTable td img {
+          width: 50px;
+          height: auto;
       }
   </style>
     <script>
@@ -90,12 +116,18 @@
         fetch('/parts')
           .then(response => response.json())
           .then(parts => {
-              const partsList = document.getElementById('partsList');
+              const tableBody = document.getElementById('partsTable').getElementsByTagName('tbody')[0];
               parts.forEach(part => {
-                  const partItem = document.createElement('li');
-                  partItem.textContent = part.name;
-                  partItem.onclick = () => fetchPartInfo(part.id);
-                  partsList.appendChild(partItem);
+                  const row = tableBody.insertRow();
+                  const nameCell = row.insertCell(0);
+                  const descCell = row.insertCell(1);
+                  const imgCell = row.insertCell(2);
+                  const downloadCell = row.insertCell(3);
+
+                  nameCell.textContent = part.name;
+                 descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
+                 imgCell.innerHTML = `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
+                 downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`;
               });
           });
         
@@ -133,7 +165,21 @@
     <a href="/parts" id="all-parts-link">All parts</a>
     <div id="status"></div>
     <div id="result"></div>
-    <ul id="partsList"></ul>
+    <div id="partsTableContainer">
+      <table id="partsTable">
+          <thead>
+              <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Image</th>
+                  <th>Download</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Parts will be dynamically inserted here -->
+          </tbody>
+      </table>
+  </div>
 
 </body>
 </html>
