@@ -260,9 +260,6 @@
             filesList += '</ul>';
             document.getElementById('modal-files').innerHTML = filesList;
             document.getElementById('modal').style.display = "block";
-            document.getElementById('print-button').addEventListener('click', function() {
-                window.print();
-            });
         }
 
         // Close modal when the user clicks on <span> (x)
@@ -280,50 +277,17 @@
   
 
       
-
+      document.getElementById('print-button').addEventListener('click', function() {
+          window.print();
+      });
       
-      // document.getElementById('imageInput').addEventListener('change', function(event) {
-      //     const [file] = event.target.files;
-      //     if (file) {
-      //         document.getElementById('imagePreview').src = URL.createObjectURL(file);
-      //         document.getElementById('imagePreview').style.display = 'block';
-      //     }
-      // });
-      
-      const socket = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/search');
-
-      console.log(socket)
-
-        socket.onopen = function(e) {
-            console.log("Connection established");
-        };
-
-        socket.onmessage = function(event) {
-            const parts = JSON.parse(event.data);
-            const tableBody = document.getElementById('partsTableBody');
-            tableBody.innerHTML = ''; // Clear existing rows
-            parts.forEach(part => {
-                const row = `<tr><td>${part.id}</td><td>${part.name}</td><td>${part.description}</td></tr>`;
-                tableBody.innerHTML += row;
-            });
-        };
-
-        socket.onclose = function(event) {
-        if (event.wasClean) {
-            console.log(`Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-        } else {
-            // e.g., server process killed or network down
-            console.log('Connection died');
-        }
-        };
-
-        socket.onerror = function(error) {
-            console.log(`WebSocket error: ${error.message}`);
-        };
-        
-        document.getElementById('searchInput').addEventListener('input', function(event) {
-            socket.send(event.target.value);
-        });
+      document.getElementById('imageInput').addEventListener('change', function(event) {
+          const [file] = event.target.files;
+          if (file) {
+              document.getElementById('imagePreview').src = URL.createObjectURL(file);
+              document.getElementById('imagePreview').style.display = 'block';
+          }
+      });
     </script>
 </head>
 <body>
@@ -336,9 +300,6 @@
           <button type="submit">Submit</button>
           <img id="imagePreview" style="display:none; width: 100px; height: auto;" />
       </form>
-      <input type="text" id="searchInput" placeholder="Search parts...">
-
-      <input type="text" id="searchInput" placeholder="Search parts...">
       <a href="/parts" id="all-parts-link">All parts</a>
       <div id="status"></div>
       <div id="result"></div>
@@ -352,7 +313,7 @@
                   <th>Download</th>
               </tr>
           </thead>
-          <tbody id="partsTableBody">
+          <tbody>
               <!-- Parts will be dynamically inserted here -->
           </tbody>
       </table>

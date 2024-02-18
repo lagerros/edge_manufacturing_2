@@ -6,7 +6,6 @@ import re
 import random
 from config import ProductionConfig  # Or whichever config you want to use
 from models import Part
-import json
 
 
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
@@ -36,7 +35,7 @@ class ModelInfo(db.Model):
 
     def __repr__(self):
         return f'<ModelInfo {self.user_prompt}>'
-    
+
 
 
 @app.route('/')
@@ -114,28 +113,4 @@ def get_part(part_id):
     return jsonify({'error': 'Part not found'}), 404
 
 
-# app.run(host='0.0.0.0', port=8080)
-
-from flask_sockets import Sockets
-
-# app = Flask(__name__)
-sockets = Sockets(app)
-
-@sockets.route('/search')
-def search_socket(ws):
-    while not ws.closed:
-        # Receive the search query from the client
-        query = ws.receive()
-        if query:
-            # Perform the search
-            parts = Part.query.filter(Part.name.like(f'%{query}%')).all()
-            # Prepare the data to send back
-            results = [{'id': part.id, 'name': part.name, 'description': part.description} for part in parts]
-            # Send the search results back to the client
-            ws.send(json.dumps(results))
-
-if __name__ == "__main__":
-    from gevent import pywsgi
-    from geventwebsocket.handler import WebSocketHandler
-    server = pywsgi.WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
-    server.serve_forever()
+app.run(host='0.0.0.0', port=8080)
