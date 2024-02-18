@@ -1,7 +1,7 @@
 from config import ProductionConfig  # Or whichever config you want to use
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from database import db
+from extensions import db
 
 app = Flask('app')
 app.config.from_object(ProductionConfig)
