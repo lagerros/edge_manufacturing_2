@@ -127,10 +127,13 @@ def search_parts(query_str):
 @app.route('/search')
 def search():
     query_str = request.args.get('query')
+    print(f"Received search query: {query_str}")
     results = search_parts(query_str)
+    print(results)
+    return jsonify([])
     # Convert results to a list of dictionaries with 'name' and 'description'
-    results_json = [{'name': result.name, 'description': result.description} for result in results]
-    return jsonify(results_json)
+   # results_json = [{'name': result.name, 'description': result.description} for result in results]
+   # return jsonify(results_json)
 
 
 app.run(host='0.0.0.0', port=8080)

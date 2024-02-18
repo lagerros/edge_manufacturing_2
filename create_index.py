@@ -1,7 +1,18 @@
 from whoosh.index import create_in
 from whoosh.fields import Schema, TEXT, ID
 import os
-import get_all_parts from db
+from database import get_all_parts
+from flask import Flask
+from config import ProductionConfig  # Or whichever config you want to use
+from extensions import db
+
+
+
+
+app = Flask(__name__)
+app.config.from_object(ProductionConfig)
+
+db.init_app(app)
 
 def create_search_index():
     if not os.path.exists("indexdir"):
@@ -19,4 +30,6 @@ def create_search_index():
     writer.commit()
 
 # Call this function to create the index
-create_search_index()
+
+with app.app_context():
+  create_search_index()

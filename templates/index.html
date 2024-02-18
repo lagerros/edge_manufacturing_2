@@ -48,6 +48,7 @@
           width: 300px;
           background-color: var(--background-color);
           border: 2px solid var(--font-color);
+          color: var(--font-color);
           margin-right: 15px
 
       }
@@ -260,6 +261,9 @@
             filesList += '</ul>';
             document.getElementById('modal-files').innerHTML = filesList;
             document.getElementById('modal').style.display = "block";
+            document.getElementById('print-button').addEventListener('click', function() {
+                window.print();
+            });
         }
 
         // Close modal when the user clicks on <span> (x)
@@ -273,36 +277,36 @@
                 document.getElementById('modal').style.display = "none";
             }
         }
+
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent the form from submitting the traditional way
+            const query = document.getElementById('searchQuery').value;
+
+            // Perform the search request
+            fetch(`/search?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    displaySearchResults(data);
+                })
+                .catch(error => console.error('Error:', error));
+        });
       });
   
 
       
-      document.getElementById('print-button').addEventListener('click', function() {
-          window.print();
-      });
+      // document.getElementById('imageInput').addEventListener('change', function(event) {
+      //     const [file] = event.target.files;
+      //     if (file) {
+      //         document.getElementById('imagePreview').src = URL.createObjectURL(file);
+      //         document.getElementById('imagePreview').style.display = 'block';
+      //     }
+      // });
       
-      document.getElementById('imageInput').addEventListener('change', function(event) {
-          const [file] = event.target.files;
-          if (file) {
-              document.getElementById('imagePreview').src = URL.createObjectURL(file);
-              document.getElementById('imagePreview').style.display = 'block';
-          }
-      });
       
-      document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent the form from submitting the traditional way
-    const query = document.getElementById('searchQuery').value;
-    
-        // Perform the search request
-        fetch(`/search?query=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                displaySearchResults(data);
-            })
-            .catch(error => console.error('Error:', error));
-    });
 
     function displaySearchResults(results) {
+        console.log(results);
         const resultsDiv = document.getElementById('searchResults');
         resultsDiv.innerHTML = ''; // Clear previous results
         
