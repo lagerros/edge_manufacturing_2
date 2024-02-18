@@ -125,9 +125,16 @@
                   const downloadCell = row.insertCell(3);
 
                   nameCell.textContent = part.name;
-                 descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
-                 imgCell.innerHTML = `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
-                 downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`;
+                if (part?.description) {
+                  descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
+                }
+                if (part?.img_filename) {
+                  imgCell.innerHTML = `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
+                }
+                if (part?.stl_filename) {
+                  downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`
+                }
+                 
               });
           });
         
