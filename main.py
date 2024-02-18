@@ -20,7 +20,7 @@ from whoosh.index import create_in, open_dir
 from whoosh.qparser import FuzzyTermPlugin, WildcardPlugin, PhrasePlugin, PrefixPlugin, MultifieldParser, OrGroup
 
 from extensions import db
-from database import createPart, createOrUpdatePart
+from database import createPart, createOrUpdatePart, deletePart
 
 # Create our client.
 token = os.environ["KITTYCAD_API_TOKEN"]
@@ -178,6 +178,13 @@ def upload_csv():
         return jsonify({'message': 'CSV processed successfully'}), 200
     else:
         return jsonify({'error': 'Invalid file format'}), 400
+
+@app.route('/parts/delete/<int:part_id>', methods=['POST'])
+def delete_part(part_id):
+    if deletePart(part_id):
+        return jsonify({'message': 'Part deleted successfully'}), 200
+    else:
+        return jsonify({'error': 'Part not found'}), 404
 
 app.run(host='0.0.0.0', port=8080)
 

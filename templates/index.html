@@ -211,6 +211,10 @@
       }
   </style>
     <script>
+      ADMIN_MODE = true
+
+
+      
 
       document.addEventListener('DOMContentLoaded', function() {
         function displayResult(fileName) {
@@ -277,6 +281,10 @@
                   const descCell = row.insertCell(1);
                   const imgCell = row.insertCell(2);
                   const downloadCell = row.insertCell(3);
+                  if (ADMIN_MODE) {
+                      const deleteCell = row.insertCell(-1); 
+                      deleteCell.innerHTML = '<button class="delete-btn" data-part-id="' + part.id + '">X</button>';
+                  }
 
                   nameCell.textContent = part.name;
                   if (part?.description) {
@@ -356,6 +364,8 @@
         });
 
         document.getElementById('uploadCsvButton').addEventListener('click', function() {
+            
+
             const input = document.getElementById('csvFileInput');
             if (!input.files.length) {
                 alert('Please select a file.');
@@ -385,6 +395,27 @@
         });
 
         
+
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('delete-btn')) {
+                e.stopPropagation(); 
+                const partId = e.target.getAttribute('data-part-id');
+                fetch(`/parts/delete/${partId}`, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            const row = e.target.closest('tr'); // Finds the closest ancestor <tr> element
+                            if (row) { // Check if the row is found
+                                row.remove(); // Removes the row from the DOM
+                            }
+                            console.log('Part deleted successfully');
+                        } else {
+                            console.error('Failed to delete part');
+                        }
+                    });
+            }
+        });
+
+        
       });
   
 
@@ -396,9 +427,6 @@
       //         document.getElementById('imagePreview').style.display = 'block';
       //     }
       // });
-      
-      
-
     
     </script>
 </head>

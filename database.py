@@ -56,3 +56,11 @@ def createOrUpdatePart(name, description=None, img_filename=None, stl_filename=N
 
 def get_all_parts():
     return Part.query.all()
+
+def deletePart(part_id):
+  part = Part.query.get(part_id)
+  if part:
+      db.session.delete(part)
+      db.session.commit()
+      return True
+  return False
