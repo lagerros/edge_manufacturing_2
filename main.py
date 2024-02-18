@@ -7,6 +7,7 @@ import random
 from config import ProductionConfig  # Or whichever config you want to use
 from models import Part
 import pandas as pd
+import requests
 
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
 from kittycad.client import ClientFromEnv
@@ -28,6 +29,8 @@ from database import createPart, createOrUpdatePart, deletePart
 
 app = Flask('app')
 app.config.from_object(ProductionConfig)
+app.config['OCTOPRINT_API_KEY'] = 'F789415192EB43EE97C6029CD46FDCB1'
+app.config['OCTOPRINT_URL'] = 'http://localhost'
 
 db.init_app(app)
 
@@ -218,7 +221,7 @@ def serve_image(filename):
 
 @app.route('/print/<gcode_path>')
 def print_gcode(gcode_path):
-    disk_gcode_path = app.config['GCODE_FOLDER'].joinpath(gcode_path)
+    disk_gcode_path = 'print/' + gcode_path
     files = {'file': open(disk_gcode_path, 'rb')}
 
     headers = {'X-Api-Key': app.config['OCTOPRINT_API_KEY']}
