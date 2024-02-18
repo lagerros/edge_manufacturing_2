@@ -14,6 +14,11 @@ from kittycad.models.api_call_status import ApiCallStatus
 from kittycad.models.file_export_format import FileExportFormat
 from kittycad.models.text_to_cad_create_body import TextToCadCreateBody
 
+from whoosh.fields import Schema, TEXT, ID
+from whoosh.index import create_in, open_dir
+from whoosh.qparser import MultifieldParser, OrGroup
+from whoosh.qparser import FuzzyTermPlugin, WildcardPlugin, PhrasePlugin
+
 from extensions import db
 from database import createPart
 
@@ -120,12 +125,21 @@ def search_parts(query_str):
   ix = open_dir("indexdir")
   search_results = []  # Initialize an empty list to hold the results
   with ix.searcher() as searcher:
-    query = QueryParser("description", ix.schema).parse(query_str)
-    results = searcher.search(query, limit=None)  # Search without limit
+    # Enhance the parser with plugins for fuzzy, wildcard, and phrase searches
+    parser = MultifieldParser(["title", "content"], schema=ix.schema, group=OrGroup)
+    parser.add_plugin(FuzzyTermPlugin())
+    parser.add_plugin(WildcardPlugin())
+    parser.add_plugin(PhrasePlugin())
+
+    # Example query that uses fuzzy search, wildcards, and phrase search
+    # Adjust the query according to your needs
+    query_str = 'fire control~2 OR "exact phrase" OR F-16*'
+    query = parser.parse(query_str)
+
+    # Execute the search
+    results = searcher.search(query, limit=None)
     for result in results:
-      # Append each result as a dictionary to the list
-      search_results.append({'name': result['name'], 'description': result['description']})
-  return search_results  # Return the list of results
+        print(result['title'], result['content'])
 
 @app.route('/search')
 def search():
