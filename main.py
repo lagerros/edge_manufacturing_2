@@ -99,8 +99,8 @@ def download_file(filename):
 
 @app.route('/parts', methods=['GET'])
 def get_parts():
-   parts = Part.query.with_entities(Part.id, Part.name).all()
-   return jsonify([{'id': part.id, 'name': part.name} for part in parts])
+   parts = Part.query.with_entities(Part.id, Part.name, Part.description, Part.img_filename, Part.stl_filename).all()
+   return jsonify([{'id': part.id, 'name': part.name, 'description': part.description, 'img_filename': part.img_filename, 'stl_filename': part.stl_filename} for part in parts])
 
 
 @app.route('/parts/<int:part_id>', methods=['GET'])
