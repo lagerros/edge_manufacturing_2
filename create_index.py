@@ -18,7 +18,7 @@ def create_search_index():
     if not os.path.exists("indexdir"):
         os.mkdir("indexdir")
     
-    schema = Schema(id=ID(stored=True), name=TEXT(stored=True), description=TEXT(stored=True))
+    schema = Schema(id=ID(stored=True), name=TEXT(stored=True), description=TEXT(stored=True), img_filename=TEXT(stored=True), stl_filename=TEXT(stored=True))
     ix = create_in("indexdir", schema)
     writer = ix.writer()
 
@@ -26,7 +26,7 @@ def create_search_index():
     parts = get_all_parts()  # This should return all parts from your database
     for part in parts:
         print(part, part.id, part.name)
-        writer.add_document(id=str(part.id), name=part.name, description=part.description)
+        writer.add_document(id=str(part.id), name=part.name, description=part.description, img_filename=part.img_filename, stl_filename=part.stl_filename)
     
     writer.commit()
 

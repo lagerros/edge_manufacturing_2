@@ -291,7 +291,7 @@
                     descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
                   }
                   if (part?.img_filename) {
-                    imgCell.innerHTML = `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
+                    imgCell.innerHTML = `<img src="/images/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
                   }
                   if (part?.stl_filename) {
                     downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`
@@ -323,7 +323,7 @@
         function openModal(part) {
             document.getElementById('modal-title').textContent = part.name;
             document.getElementById('modal-description').textContent = part.description;
-            document.getElementById('modal-image').src = `/path/to/image/${part.img_filename}`;
+            document.getElementById('modal-image').src = `/images/${part.img_filename}`;
             let filesList = 'Files: <ul>';
             if (part.stl_filename) {
                 filesList += `<li>${part.stl_filename}</li>`;
@@ -437,13 +437,13 @@
         <input type="file" id="csvFileInput" accept=".csv">
         <button type="button" id="uploadCsvButton">Upload CSV</button>
     </form>
-      <form action="/submit" method="post">
+      <!-- <form action="/submit" method="post">
           <input type="text" name="prompt" placeholder="Enter your design prompt">
           <input type="file" accept="image/*" id="imageInput" name="image" capture="capture" />
           <label for="imageInput" class="image-upload-button">Take Photo</label>
           <button type="submit">Submit</button>
           <img id="imagePreview" style="display:none; width: 100px; height: auto;" />
-      </form>
+      </form> -->
       <form id="searchForm">
         <input type="text" id="searchQuery" placeholder="Search parts...">
         <button type="submit">Search</button>

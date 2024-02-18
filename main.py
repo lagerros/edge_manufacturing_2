@@ -42,6 +42,33 @@ class ModelInfo(db.Model):
         return f'<ModelInfo {self.user_prompt}>'
 
 
+def format_part_info(part):
+    """
+    Formats a single part's information, handling potentially missing properties.
+
+    :param part: A Part object or a dictionary containing part information.
+    :return: A dictionary with the part's information, with defaults for missing properties.
+    """
+    # If part is a model instance, convert to dictionary, else assume it's already a dictionary
+    part_info = {
+        'id': getattr(part, 'id', 'N/A'),
+        'name': getattr(part, 'name', 'N/A'),
+        'description': getattr(part, 'description', 'N/A'),
+        'img_filename': getattr(part, 'img_filename', 'N/A'),
+        'stl_filename': getattr(part, 'stl_filename', 'N/A')
+    } if not isinstance(part, dict) else part
+
+    return part_info
+
+def jsonify_parts(parts):
+    """
+    Converts a list of parts into a JSON-friendly format, using format_part_info for each part.
+
+    :param parts: A list of Part objects or dictionaries containing part information.
+    :return: A JSON response containing the parts information.
+    """
+    parts_list = [format_part_info(part) for part in parts]
+    return jsonify(parts_list)
 
 @app.route('/')
 def index():
@@ -107,14 +134,15 @@ def download_file(filename):
 @app.route('/parts', methods=['GET'])
 def get_parts():
    parts = Part.query.with_entities(Part.id, Part.name, Part.description, Part.img_filename, Part.stl_filename).all()
-   return jsonify([{'id': part.id, 'name': part.name, 'description': part.description, 'img_filename': part.img_filename, 'stl_filename': part.stl_filename} for part in parts])
+   return jsonify_parts(parts)
 
 
 @app.route('/parts/<int:part_id>', methods=['GET'])
 def get_part(part_id):
     part = Part.query.get(part_id)
     if part:
-        return jsonify({'id': part.id, 'name': part.name, 'description': part.description, 'img_filename': part.img_filename, 'stl_filename': part.stl_filename})
+        part_info = format_part_info(part)
+        return jsonify(part_info)
     return jsonify({'error': 'Part not found'}), 404
 
 
@@ -142,7 +170,7 @@ def search_parts(query_str):
           print(result)
           # Make sure to call .fields() to get a dictionary of the stored fields
           result_data = result.fields()
-          search_results.append({'name': result_data["name"], 'description': result_data["description"], 'img_filename': result_data["img_filename"], 'stl_filename': result_data["stl_filename"]})
+          search_results.append(format_part_info(result_data))
 
   # Now search_results contains all the data needed, and can be used outside the context manager
   return search_results
@@ -154,8 +182,7 @@ def search():
     print(f"Received search query: {query_str}")
     results = search_parts(query_str)
     # Convert results to a list of dictionaries with 'name' and 'description'
-    results_json = [{'name': result["name"], 'description': result["description"], 'img_filename': result["img_filename"], 'stl_filename': result["stl_filename"]} for result in results]
-    return jsonify(results_json)
+    return jsonify_parts(results)
 
 
 @app.route('/upload_csv', methods=['POST'])
@@ -185,7 +212,7 @@ def delete_part(part_id):
         return jsonify({'message': 'Part deleted successfully'}), 200
     else:
         return jsonify({'error': 'Part not found'}), 404
-    
+
 @app.route('/images/<filename>')
 def serve_image(filename):
     return send_from_directory('images', filename)
