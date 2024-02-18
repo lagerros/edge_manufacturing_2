@@ -333,7 +333,16 @@
             document.getElementById('modal-files').innerHTML = filesList;
             document.getElementById('modal').style.display = "block";
             document.getElementById('print-button').addEventListener('click', function() {
-                window.print();
+                // window.print();
+                const xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        alert('file is printing')
+                    }
+                };
+                // xhttp.open("GET", `/print/${part.gcode_path}`, true);
+                xhttp.open("GET", '/print/square.gcode', true);
+                xhttp.send();
             });
         }
 
@@ -500,3 +509,5 @@
 
 </body>
 </html>
+
+<!-- freecad, cad query, open orion -->

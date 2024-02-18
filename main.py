@@ -8,7 +8,6 @@ from config import ProductionConfig  # Or whichever config you want to use
 from models import Part
 import pandas as pd
 
-
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
 from kittycad.client import ClientFromEnv
 from kittycad.models.api_call_status import ApiCallStatus
@@ -216,5 +215,30 @@ def delete_part(part_id):
 @app.route('/images/<filename>')
 def serve_image(filename):
     return send_from_directory('images', filename)
+
+@app.route('/print/<gcode_path>')
+def print_gcode(gcode_path):
+    disk_gcode_path = app.config['GCODE_FOLDER'].joinpath(gcode_path)
+    files = {'file': open(disk_gcode_path, 'rb')}
+
+    headers = {'X-Api-Key': app.config['OCTOPRINT_API_KEY']}
+
+    response = requests.post(f'{app.config["OCTOPRINT_URL"]}/api/files/local', files=files, headers=headers)
+
+    if response.status_code == 201:  # http 201 is 'created'
+        print('File created')
+
+    payload = {'command': 'select', 'print': True}
+    headers = {'Content-Type': 'application/json', 'X-Api-Key': app.config['OCTOPRINT_API_KEY']}
+    response = requests.post(f'{app.config["OCTOPRINT_URL"]}/api/files/local/{disk_gcode_path.name}', json=payload, headers=headers)
+
+    print('\n\n\n\n\n', response.status_code, '\n\n\n\n\n')
+
+    if response.status_code == 204:
+        print('Print job started successfully')
+        return 'done', 200
+    else:
+        print('Error starting print job:', response.text)
+        return 'error', 500
 
 app.run(host='0.0.0.0', port=8080)
