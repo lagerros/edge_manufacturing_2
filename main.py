@@ -124,19 +124,20 @@ from whoosh.index import open_dir
 def search_parts(query_str):
   ix = open_dir("indexdir")
   search_results = []  # Initialize an empty list to hold the results
-  search_results = []  # Initialize an empty list to hold the results
 
   with ix.searcher() as searcher:
-      parser = MultifieldParser(["title", "content"], schema=ix.schema, group=OrGroup)
+      parser = MultifieldParser(["name", "description"], schema=ix.schema, group=OrGroup)
       parser.add_plugin(FuzzyTermPlugin())
       parser.add_plugin(WildcardPlugin())
       parser.add_plugin(PhrasePlugin())
 
       query = parser.parse(query_str)
+      print(query)
       results = searcher.search(query, limit=None)
 
       # Extract necessary data within the context manager
       for result in results:
+          print(result)
           # Make sure to call .fields() to get a dictionary of the stored fields
           result_data = result.fields()
           search_results.append({'name': result_data["name"], 'description': result_data["description"]})
@@ -150,6 +151,7 @@ def search():
     query_str = request.args.get('query')
     print(f"Received search query: {query_str}")
     results = search_parts(query_str)
+    print(results)
     # Convert results to a list of dictionaries with 'name' and 'description'
     results_json = [{'name': result["name"], 'description': result["description"]} for result in results]
     return jsonify(results_json)

@@ -226,6 +226,54 @@
               alert(`Name: ${part.name}\nDescription: ${part.description}`);
           });
         }
+
+        function displaySearchResults(results) {
+          const resultsDiv = document.getElementById('searchTableContainer');
+          
+
+          // Check if there are any results
+          if (results.length === 0) {
+              resultsDiv.innerHTML = '<p>No results found.</p>';
+              return;
+          } else {
+            const tableBody = document.getElementById('searchTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // Clear previous results
+            results.forEach(part => {
+                const row = tableBody.insertRow();
+                const nameCell = row.insertCell(0);
+                const descCell = row.insertCell(1);
+                const imgCell = row.insertCell(2);
+                const downloadCell = row.insertCell(3);
+
+                nameCell.textContent = part.name;
+                if (part?.description) {
+                  descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
+                }
+                if (part?.img_filename) {
+                  imgCell.innerHTML = `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
+                }
+                if (part?.stl_filename) {
+                  downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`
+                }
+
+              row.addEventListener('click', () => openModal(part));
+              console.log(results);
+
+
+            })
+
+          }
+
+          // // Create a list of search results
+          // const ul = document.createElement('ul');
+          // results.forEach(result => {
+          //     const li = document.createElement('li');
+          //     li.textContent = `${result.name} - ${result.description}`;
+          //     ul.appendChild(li);
+          // });
+          // resultsDiv.appendChild(ul);
+
+        }
         
         fetch('/parts')
           .then(response => response.json())
@@ -315,49 +363,7 @@
                 .catch(error => console.error('Error:', error));
         });
 
-        function displaySearchResults(results) {
-          const resultsDiv = document.getElementById('searchResults');
-          resultsDiv.innerHTML = ''; // Clear previous results
-
-          // Check if there are any results
-          if (results.length === 0) {
-              resultsDiv.innerHTML = '<p>No results found.</p>';
-              return;
-          }
-
-          // // Create a list of search results
-          // const ul = document.createElement('ul');
-          // results.forEach(result => {
-          //     const li = document.createElement('li');
-          //     li.textContent = `${result.name} - ${result.description}`;
-          //     ul.appendChild(li);
-          // });
-          // resultsDiv.appendChild(ul);
-          const tableBody = document.getElementById('searchTable').getElementsByTagName('tbody')[0];
-          results.forEach(part => {
-              const row = tableBody.insertRow();
-              const nameCell = row.insertCell(0);
-              const descCell = row.insertCell(1);
-              const imgCell = row.insertCell(2);
-              const downloadCell = row.insertCell(3);
-
-              nameCell.textContent = part.name;
-              if (part?.description) {
-                descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
-              }
-              if (part?.img_filename) {
-                imgCell.innerHTML = `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
-              }
-              if (part?.stl_filename) {
-                downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`
-              }
-
-            row.addEventListener('click', () => openModal(part));
-            console.log(results);
-
-
-          })
-        }
+        
       });
   
 
@@ -393,7 +399,7 @@
       <a href="/parts" id="all-parts-link">All parts</a>
       <div id="status"></div>
       <div id="result"></div>
-      <div id="partsTableContainer">
+      <div id="searchTableContainer">
         <table id="searchTable">
             <thead>
                 <tr>
@@ -407,31 +413,34 @@
                 <!-- Parts will be dynamically inserted here -->
             </tbody>
         </table>
-      <table id="partsTable">
-          <thead>
-              <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Image</th>
-                  <th>Download</th>
-              </tr>
-          </thead>
-          <tbody>
-              <!-- Parts will be dynamically inserted here -->
-          </tbody>
-      </table>
+      </div>
+      <div id="partsTableContainer">
+        
+        <table id="partsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Image</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Parts will be dynamically inserted here -->
+            </tbody>
+        </table>
       
-      <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2 id="modal-title">Part Title</h2>
-            <div class="modal-body">
-                <img id="modal-image" src="" alt="Part Image" style="width:100px; height:auto;">
-                <p id="modal-description">Part Description</p>
-            </div>
-            <div id="modal-files">Files:</div>
-            <button id="print-button">Print</button>
-        </div>
+        <div id="modal" class="modal">
+          <div class="modal-content">
+              <span class="close-button">&times;</span>
+              <h2 id="modal-title">Part Title</h2>
+              <div class="modal-body">
+                  <img id="modal-image" src="" alt="Part Image" style="width:100px; height:auto;">
+                  <p id="modal-description">Part Description</p>
+              </div>
+              <div id="modal-files">Files:</div>
+              <button id="print-button">Print</button>
+          </div>
     </div>
   </div>
 
