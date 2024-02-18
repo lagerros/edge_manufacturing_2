@@ -113,9 +113,8 @@ def get_part(part_id):
     return jsonify({'error': 'Part not found'}), 404
 
 
-app.run(host='0.0.0.0', port=8080)
+# app.run(host='0.0.0.0', port=8080)
 
-from flask import Flask, request
 from flask_sockets import Sockets
 
 # app = Flask(__name__)

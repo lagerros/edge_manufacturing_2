@@ -260,6 +260,9 @@
             filesList += '</ul>';
             document.getElementById('modal-files').innerHTML = filesList;
             document.getElementById('modal').style.display = "block";
+            document.getElementById('print-button').addEventListener('click', function() {
+                window.print();
+            });
         }
 
         // Close modal when the user clicks on <span> (x)
@@ -277,19 +280,19 @@
   
 
       
-      document.getElementById('print-button').addEventListener('click', function() {
-          window.print();
-      });
+
       
-      document.getElementById('imageInput').addEventListener('change', function(event) {
-          const [file] = event.target.files;
-          if (file) {
-              document.getElementById('imagePreview').src = URL.createObjectURL(file);
-              document.getElementById('imagePreview').style.display = 'block';
-          }
-      });
+      // document.getElementById('imageInput').addEventListener('change', function(event) {
+      //     const [file] = event.target.files;
+      //     if (file) {
+      //         document.getElementById('imagePreview').src = URL.createObjectURL(file);
+      //         document.getElementById('imagePreview').style.display = 'block';
+      //     }
+      // });
       
-      const socket = new WebSocket('ws://' + window.location.host + '/echo');
+      const socket = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/echo');
+
+      console.log(socket)
 
         socket.onopen = function(e) {
             console.log("Connection established");
@@ -311,9 +314,6 @@
         socket.onerror = function(error) {
             console.log(`WebSocket error: ${error.message}`);
         };
-
-        // Example of sending a message
-        socket.send('Hello Server!');
     </script>
 </head>
 <body>
