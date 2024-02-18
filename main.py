@@ -59,7 +59,7 @@ def submit():
       print(f"  * {name}")
 
     final_result = response.outputs["source.stl"]
-    with open(file_name+".stl", "w", encoding="utf-8") as output_file:
+    with open(file_name, "w", encoding="utf-8") as output_file:
       output_file.write(final_result.get_decoded().decode("utf-8"))
       print(f"Saved output to {output_file.name}")
 
