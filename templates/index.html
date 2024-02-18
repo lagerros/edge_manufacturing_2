@@ -224,6 +224,8 @@
       
 
       document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('searchTable').style.display = 'none';
+        
         function displayResult(fileName) {
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = `<a href="/download/${fileName}" download><img src="icon.png" alt="Download File"/></a>`;
@@ -241,7 +243,9 @@
         function displaySearchResults(results) {
             const resultsDiv = document.getElementById('searchTableContainer');
             const messageDiv = document.getElementById('searchMessage'); // Dedicated message element
-            const tableBody = document.getElementById('searchTable').getElementsByTagName('tbody')[0];
+            const table = document.getElementById('searchTable');
+            const tableBody = table.getElementsByTagName('tbody')[0];
+            const tableHead = table.getElementsByTagName('thead')[0]; // Get the table head
 
             // Clear previous results without removing the tbody itself
             while (tableBody.firstChild) {
@@ -249,17 +253,12 @@
             }
 
             if (results.length === 0) {
-              if (document.getElementById('searchTable')) {
-                  document.getElementById('searchTable').style.display = '';
-              }
-              
-                messageDiv.textContent  = 'No results found.';
+                table.style.display = 'none'; // Hide the table if no results
+                messageDiv.textContent = 'No results found.';
             } else {
-                // Ensure the table and message div are correctly displayed
-                document.getElementById('searchTable').style.display = '';
-                if (document.getElementById('searchMessage')) {
-                    document.getElementById('searchMessage').style.display = 'none'; // Or 'block' as needed
-                }
+                table.style.display = ''; // Show the table
+                tableHead.style.display = ''; // Ensure the table head is visible
+                messageDiv.style.display = 'none'; // Hide the message div
 
                 results.forEach(part => {
                     const row = tableBody.insertRow();
