@@ -1,6 +1,8 @@
 import os
 import time
 from flask import Flask, render_template, request, send_from_directory, jsonify
+import re
+import random
 
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
 from kittycad.client import ClientFromEnv
@@ -25,6 +27,9 @@ def index():
 def submit():
   user_prompt = request.form['prompt']
   print("received new api call with", user_prompt)
+  clean_prompt = re.sub(r'\W+', '', user_prompt)  # Remove all non-word characters
+  random_numbers = ''.join(random.choices('0123456789', k=5))  # Generate 5 random numbers
+  file_name = f"{clean_prompt}_{random_numbers}.stl"  # Append random numbers to the cleaned prompt
   # Prompt the API to generate a 3D model from text.
   response = create_text_to_cad.sync(
       client=client,
@@ -53,13 +58,10 @@ def submit():
     for name in response.outputs:
       print(f"  * {name}")
 
-    # Save the STEP data as text-to-cad-output.step
-    final_result = response.outputs["source.step"]
-    with open("text-to-cad-output.step", "w", encoding="utf-8") as output_file:
+    final_result = response.outputs["source.stl"]
+    with open(file_name+".stl", "w", encoding="utf-8") as output_file:
       output_file.write(final_result.get_decoded().decode("utf-8"))
       print(f"Saved output to {output_file.name}")
-  # Ensure you save the output file with a unique name, e.g., using a UUID
-  file_name = "unique_output_file_name_here.stl"  # Use actual logic to generate unique file names
 
   # Assuming the rest of the code remains the same, including the file saving part
   # After saving the file, return the file name to the client
