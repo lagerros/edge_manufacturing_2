@@ -13,17 +13,27 @@ token = os.environ["KITTYCAD_API_TOKEN"]
 
 client = ClientFromEnv(token=token, timeout=30, verify_ssl=True)
 
-# Prompt the API to generate a 3D model from text.
-response = create_text_to_cad.sync(
-    client=client,
-    output_format=FileExportFormat.STL,
-    body=TextToCadCreateBody(
-        prompt="Design a gear with 40 teeth",
-    ),
-)
+app = Flask('app')
 
-# Polling to check if the task is complete
-while response.completed_at is None:
+
+@app.route('/')
+def index():
+  return render_template('index.html')
+
+
+@app.route('/submit', methods=['POST'])
+def submit():
+  user_prompt = request.form['prompt']
+  print("received new api call with", user_prompt)
+  # Prompt the API to generate a 3D model from text.
+  response = create_text_to_cad.sync(
+      client=client,
+      output_format=FileExportFormat.STL,
+      body=TextToCadCreateBody(prompt=user_prompt, ),
+  )
+
+  # Polling to check if the task is complete
+  while response.completed_at is None:
     # Wait for 5 seconds before checking again
     time.sleep(5)
 
@@ -33,43 +43,32 @@ while response.completed_at is None:
         id=response.id,
     )
 
-if response.status == ApiCallStatus.FAILED:
+  if response.status == ApiCallStatus.FAILED:
     # Print out the error message
     print(f"Text-to-CAD failed: {response.error}")
 
-elif response.status == ApiCallStatus.COMPLETED:
+  elif response.status == ApiCallStatus.COMPLETED:
     # Print out the names of the generated files
     print(f"Text-to-CAD completed and returned {len(response.outputs)} files:")
     for name in response.outputs:
-        print(f"  * {name}")
+      print(f"  * {name}")
 
     # Save the STEP data as text-to-cad-output.step
     final_result = response.outputs["source.step"]
     with open("text-to-cad-output.step", "w", encoding="utf-8") as output_file:
-        output_file.write(final_result.get_decoded().decode("utf-8"))
-        print(f"Saved output to {output_file.name}")
+      output_file.write(final_result.get_decoded().decode("utf-8"))
+      print(f"Saved output to {output_file.name}")
+  # Ensure you save the output file with a unique name, e.g., using a UUID
+  file_name = "unique_output_file_name_here.stl"  # Use actual logic to generate unique file names
 
+  # Assuming the rest of the code remains the same, including the file saving part
+  # After saving the file, return the file name to the client
+  return jsonify({'fileName': file_name})
 
-
-app = Flask('app')
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/submit', methods=['POST'])
-def submit():
-    user_prompt = request.form['prompt']
-    # Existing code to call create_text_to_cad API with user_prompt
-    # Ensure you save the output file with a unique name, e.g., using a UUID
-    file_name = "unique_output_file_name_here.stl"  # Use actual logic to generate unique file names
-
-    # Assuming the rest of the code remains the same, including the file saving part
-    # After saving the file, return the file name to the client
-    return jsonify({'fileName': file_name})
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    return send_from_directory(directory=".", path=filename, as_attachment=True)
+  return send_from_directory(directory=".", path=filename, as_attachment=True)
+
 
 app.run(host='0.0.0.0', port=8080)
