@@ -2,7 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Text to CAD</title>
+    <title>Edge Field Manufacturing</title>
+    <style>
+      :root {
+          --background-color: #1a1a1a;
+          --font-color: #f0f0f0;
+          --link-opacity: 0.8;
+      }
+
+      body {
+          font-family: 'Courier New', Courier, monospace;
+          background-color: var(--background-color);
+          color: var(--font-color);
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      #company-name {
+          position: absolute;
+          top: 0;
+          left: 0;
+          margin: 20px;
+          font-size: 24px;
+      }
+
+      form {
+          margin-top: 100px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      input[type="text"] {
+          font-family: inherit;
+          padding: 10px;
+          margin-bottom: 10px;
+          width: 300px;
+      }
+
+      #all-parts-link {
+          margin-top: 20px;
+          opacity: var(--link-opacity);
+      }
+
+      #all-parts-link:hover {
+          opacity: 1;
+      }
+  </style>
     <script>
 
       document.addEventListener('DOMContentLoaded', function() {
@@ -57,13 +106,16 @@
     </script>
 </head>
 <body>
-    <ul id="partsList"></ul>
+    
+    <div id="company-name">edge</div>
     <form action="/submit" method="post">
         <input type="text" name="prompt" placeholder="Enter your design prompt">
         <button type="submit">Submit</button>
     </form>
+    <a href="/parts" id="all-parts-link">All parts</a>
     <div id="status"></div>
     <div id="result"></div>
+    <ul id="partsList"></ul>
 
 </body>
 </html>
