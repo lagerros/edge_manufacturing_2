@@ -46,7 +46,7 @@ def getSimilarItems(image, prompt):
     print("get similar stuff")
 
 # with app.app_context():
-#   createPart("231 servo", "The F-16A is a single-engine, single-seat, multirole tactical fighter with full air-to-air and air-to-surface combat capabilities. The F-16B is a two-seat (tandem) version and performs the secondary role of a trainer. The fuselage is characterized by a large bubble canopy, forebody strakes, and an under fuselage engine air inlet. The wing and tail surfaces are thin and feature moderate aft sweep. The wing has automatic leading edge flaps which enhance performance over a wide speed range. Flaperons are mounted on the trailing edge of the wing and combine the functions of flaps and ailerons. The horizontal tails have a small negative", None, None)
+#   createPart("motor handle", "The fire control system includes a fire control radar with search and tracking capability, a radar electro-optical (REO) display, and a head-up display (RUD). A stores management system (SMS) presents a control panel and visual display for inventory, control, and release of all stores. Basic armament includes afuselage-mounted multibarrel 20 mm gun and anai -to-air missile on each wingtip. Additional stores of various types can be carried on pylons mounted under the wings and on the fuselage centerline. ", None, None)
 
 
 @app.route('/submit', methods=['POST'])
@@ -122,9 +122,7 @@ def search_parts(query_str):
   with ix.searcher() as searcher:
     query = QueryParser("description", ix.schema).parse(query_str)
     results = searcher.search(query, limit=None)  # Search without limit
-    print(results)
     for result in results:
-      print(result)
       # Append each result as a dictionary to the list
       search_results.append({'name': result['name'], 'description': result['description']})
   return search_results  # Return the list of results
@@ -134,11 +132,9 @@ def search():
     query_str = request.args.get('query')
     print(f"Received search query: {query_str}")
     results = search_parts(query_str)
-    print(results)
-    return jsonify([])
     # Convert results to a list of dictionaries with 'name' and 'description'
-   # results_json = [{'name': result.name, 'description': result.description} for result in results]
-   # return jsonify(results_json)
+    results_json = [{'name': result["name"], 'description': result["description"]} for result in results]
+    return jsonify(results_json)
 
 
 app.run(host='0.0.0.0', port=8080)
