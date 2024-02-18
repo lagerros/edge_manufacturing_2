@@ -117,12 +117,17 @@ from whoosh.qparser import QueryParser
 from whoosh.index import open_dir
 
 def search_parts(query_str):
-    ix = open_dir("indexdir")
-    with ix.searcher() as searcher:
-        query = QueryParser("description", ix.schema).parse(query_str)
-        results = searcher.search(query)
-        for result in results:
-            print(result['name'], result['description'])  # Or handle the result as needed
+  ix = open_dir("indexdir")
+  search_results = []  # Initialize an empty list to hold the results
+  with ix.searcher() as searcher:
+    query = QueryParser("description", ix.schema).parse(query_str)
+    results = searcher.search(query, limit=None)  # Search without limit
+    print(results)
+    for result in results:
+      print(result)
+      # Append each result as a dictionary to the list
+      search_results.append({'name': result['name'], 'description': result['description']})
+  return search_results  # Return the list of results
 
 @app.route('/search')
 def search():

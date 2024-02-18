@@ -25,6 +25,7 @@ def create_search_index():
     # Assuming you have a function to get all parts
     parts = get_all_parts()  # This should return all parts from your database
     for part in parts:
+        print(part, part.id, part.name, part.description)
         writer.add_document(id=str(part.id), name=part.name, description=part.description)
     
     writer.commit()
