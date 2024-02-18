@@ -16,8 +16,7 @@ from kittycad.models.text_to_cad_create_body import TextToCadCreateBody
 
 from whoosh.fields import Schema, TEXT, ID
 from whoosh.index import create_in, open_dir
-from whoosh.qparser import MultifieldParser, OrGroup
-from whoosh.qparser import FuzzyTermPlugin, WildcardPlugin, PhrasePlugin
+from whoosh.qparser import FuzzyTermPlugin, WildcardPlugin, PhrasePlugin, PrefixPlugin, MultifieldParser, OrGroup
 
 from extensions import db
 from database import createPart
@@ -130,8 +129,10 @@ def search_parts(query_str):
       parser.add_plugin(FuzzyTermPlugin())
       parser.add_plugin(WildcardPlugin())
       parser.add_plugin(PhrasePlugin())
+      parser.add_plugin(PrefixPlugin()) 
 
-      query = parser.parse(query_str)
+
+      query = parser.parse(query_str+"*")
       print(query)
       results = searcher.search(query, limit=None)
 

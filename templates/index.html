@@ -228,51 +228,43 @@
         }
 
         function displaySearchResults(results) {
-          const resultsDiv = document.getElementById('searchTableContainer');
-          
-
-          // Check if there are any results
-          if (results.length === 0) {
-              resultsDiv.innerHTML = '<p>No results found.</p>';
-              return;
-          } else {
+            const resultsDiv = document.getElementById('searchTableContainer');
+            const messageDiv = document.getElementById('searchMessage'); // Dedicated message element
             const tableBody = document.getElementById('searchTable').getElementsByTagName('tbody')[0];
-            tableBody.innerHTML = ''; // Clear previous results
-            results.forEach(part => {
-                const row = tableBody.insertRow();
-                const nameCell = row.insertCell(0);
-                const descCell = row.insertCell(1);
-                const imgCell = row.insertCell(2);
-                const downloadCell = row.insertCell(3);
 
-                nameCell.textContent = part.name;
-                if (part?.description) {
-                  descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
+            // Clear previous results without removing the tbody itself
+            while (tableBody.firstChild) {
+                tableBody.removeChild(tableBody.firstChild);
+            }
+
+            if (results.length === 0) {
+              if (document.getElementById('searchTable')) {
+                  document.getElementById('searchTable').style.display = '';
+              }
+              
+                messageDiv.textContent  = 'No results found.';
+            } else {
+                // Ensure the table and message div are correctly displayed
+                document.getElementById('searchTable').style.display = '';
+                if (document.getElementById('searchMessage')) {
+                    document.getElementById('searchMessage').style.display = 'none'; // Or 'block' as needed
                 }
-                if (part?.img_filename) {
-                  imgCell.innerHTML = `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
-                }
-                if (part?.stl_filename) {
-                  downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`
-                }
 
-              row.addEventListener('click', () => openModal(part));
-              console.log(results);
+                results.forEach(part => {
+                    const row = tableBody.insertRow();
+                    const nameCell = row.insertCell(0);
+                    const descCell = row.insertCell(1);
+                    const imgCell = row.insertCell(2);
+                    const downloadCell = row.insertCell(3);
 
+                    nameCell.textContent = part.name;
+                    descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
+                    imgCell.innerHTML = part.img_filename ? `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">` : '';
+                    downloadCell.innerHTML = part.stl_filename ? `<a href="/download/${part.stl_filename}" download>Download</a>` : '';
 
-            })
-
-          }
-
-          // // Create a list of search results
-          // const ul = document.createElement('ul');
-          // results.forEach(result => {
-          //     const li = document.createElement('li');
-          //     li.textContent = `${result.name} - ${result.description}`;
-          //     ul.appendChild(li);
-          // });
-          // resultsDiv.appendChild(ul);
-
+                    row.addEventListener('click', () => openModal(part));
+                });
+            }
         }
         
         fetch('/parts')
@@ -399,6 +391,7 @@
       <a href="/parts" id="all-parts-link">All parts</a>
       <div id="status"></div>
       <div id="result"></div>
+      <div id="searchMessage"> </div>
       <div id="searchTableContainer">
         <table id="searchTable">
             <thead>
