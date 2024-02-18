@@ -114,7 +114,7 @@ def get_parts():
 def get_part(part_id):
     part = Part.query.get(part_id)
     if part:
-        return jsonify({'id': part.id, 'name': part.name, 'description': part.description})
+        return jsonify({'id': part.id, 'name': part.name, 'description': part.description, 'img_filename': part.img_filename, 'stl_filename': part.stl_filename})
     return jsonify({'error': 'Part not found'}), 404
 
 
@@ -142,7 +142,7 @@ def search_parts(query_str):
           print(result)
           # Make sure to call .fields() to get a dictionary of the stored fields
           result_data = result.fields()
-          search_results.append({'name': result_data["name"], 'description': result_data["description"]})
+          search_results.append({'name': result_data["name"], 'description': result_data["description"], 'img_filename': result_data["img_filename"], 'stl_filename': result_data["stl_filename"]})
 
   # Now search_results contains all the data needed, and can be used outside the context manager
   return search_results
@@ -154,7 +154,7 @@ def search():
     print(f"Received search query: {query_str}")
     results = search_parts(query_str)
     # Convert results to a list of dictionaries with 'name' and 'description'
-    results_json = [{'name': result["name"], 'description': result["description"]} for result in results]
+    results_json = [{'name': result["name"], 'description': result["description"], 'img_filename': result["img_filename"], 'stl_filename': result["stl_filename"]} for result in results]
     return jsonify(results_json)
 
 
