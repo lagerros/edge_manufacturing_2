@@ -7,8 +7,6 @@ from models import Part
 app = Flask('app')
 app.config.from_object(ProductionConfig)
 
-db = SQLAlchemy(app)
-
 from models import Part  # Adjust the import path based on your project structure
 
 
