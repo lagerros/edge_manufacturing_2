@@ -5,7 +5,7 @@ description = ""
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10.0,<3.12"
+python = "=3.9.2"
 flask = "^3.0.0"
 kittycad = "0.6.5"
 flask-sqlalchemy = "^3.1.1"

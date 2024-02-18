@@ -53,12 +53,15 @@
       }
 
       button[type="submit"] {
-          height: 35px;
+          height: 40px;
           font-family: inherit;
           background-color: var(--background-color);
           border: 2px solid var(--font-color);
           color: var(--font-color);
-          transition: background-color 0.3s, color 0.3s; /* Smooth transition for background and text color */
+          transition: background-color 0.3s, color 0.3s; 
+
+          margin-left: 10px; 
+        /* Smooth transition for background and text color */
       }
 
       button[type="submit"]:hover {
@@ -158,12 +161,29 @@
 
       #print-button {
           margin-top: 20px;
-          width: 100%;
+          width: 50%;
           padding: 10px;
           background-color: var(--font-color);
           color: var(--background-color);
           border: none;
           cursor: pointer;
+      }
+
+      label.image-upload-button {
+          height: 35px;
+          font-family: inherit;
+          background-color: var(--background-color);
+          border: 2px solid var(--font-color);
+          color: var(--font-color);
+          padding: 0 15px;
+          line-height: 35px; /* Aligns text vertically */
+          transition: background-color 0.3s, color 0.3s; /* Smooth transition for background and text color */
+          cursor: pointer; /* Changes the cursor to a pointer */
+      }
+
+      label.image-upload-button:hover {
+          background-color: var(--font-color); /* Inverts the background color */
+          color: var(--background-color); /* Inverts the text color */
       }
   </style>
     <script>
@@ -267,6 +287,8 @@
     <div id="company-name">edge</div>
       <form action="/submit" method="post">
           <input type="text" name="prompt" placeholder="Enter your design prompt">
+          <input type="file" accept="image/*" id="imageInput" name="image" capture="environment" style="display:none;" />
+          <label for="imageInput" class="image-upload-button">Take Photo</label>
           <button type="submit">Submit</button>
       </form>
       <a href="/parts" id="all-parts-link">All parts</a>
