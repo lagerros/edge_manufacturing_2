@@ -263,7 +263,7 @@
 
                     nameCell.textContent = part.name;
                     descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
-                    imgCell.innerHTML = part.img_filename ? `<img src="/path/to/image/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">` : '';
+                    imgCell.innerHTML = part.img_filename ? `<img src="/images/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">` : '';
                     downloadCell.innerHTML = part.stl_filename ? `<a href="/download/${part.stl_filename}" download>Download</a>` : '';
 
                     row.addEventListener('click', () => openModal(part));

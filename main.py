@@ -185,6 +185,9 @@ def delete_part(part_id):
         return jsonify({'message': 'Part deleted successfully'}), 200
     else:
         return jsonify({'error': 'Part not found'}), 404
+    
+@app.route('/images/<filename>')
+def serve_image(filename):
+    return send_from_directory('images', filename)
 
 app.run(host='0.0.0.0', port=8080)
-
