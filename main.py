@@ -245,7 +245,14 @@ def print_gcode(gcode_path):
         return 'error', 500
 
 
-
+@app.route('/print_status')
+def print_status():
+    headers = {'X-Api-Key': app.config['OCTOPRINT_API_KEY']}
+    response = requests.get(f'{app.config["OCTOPRINT_URL"]}/api/job', headers=headers)
+    if response.status_code == 200:
+        return response.json(), 200
+    else:
+        return jsonify({'error': 'Failed to fetch print status'}), response.status_code
 
 
 app.run(host='0.0.0.0', port=8080)

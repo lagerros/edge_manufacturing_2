@@ -472,6 +472,31 @@
             }
         });
 
+        function updatePrintStatus() {
+            fetch('/print_status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('printState').textContent = data.state || 'N/A';
+                    const timeLeft = Math.round((data.progress.printTimeLeft || 0) / 60); // Convert seconds to minutes
+                    document.getElementById('timeLeft').textContent = timeLeft;
+                    const completion = Math.round(data.progress.completion || 0);
+                    document.getElementById('completion').textContent = completion;
+                    document.getElementById('progressBar').style.width = `${completion}%`;
+                    // Show the print status section
+                    document.getElementById('printStatus').style.display = 'block';
+                    // Hide the print button
+                    document.getElementById('print-button').style.display = 'none';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Attach event listener to the print button to start fetching print status
+        document.getElementById('print-button').addEventListener('click', function() {
+            updatePrintStatus();
+            // Start updating print status every 30 seconds
+            setInterval(updatePrintStatus, 30000);
+        });
+
         
       });
   
@@ -543,6 +568,14 @@
           <!-- <div id="modal-files">Files:</div> -->
           <div id="print-button-container"> 
             <button id="print-button">Print</button>
+            <div id="printStatus" style="display: none;">
+                <h3>Print Status: <span id="printState">N/A</span></h3>
+                <div>Time Left: <span id="timeLeft">N/A</span> minutes</div>
+                <div>Completion: <span id="completion">0</span>%</div>
+                <div id="progressBarContainer" style="width: 100%; background-color: #ddd;">
+                    <div id="progressBar" style="height: 24px; width: 0%; background-color: #4CAF50;"></div>
+                </div>
+            </div>
           </div> 
             
         </div>
