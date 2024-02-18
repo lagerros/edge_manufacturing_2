@@ -11,6 +11,27 @@
             resultDiv.innerHTML = `<a href="/download/${fileName}" download><img src="icon.png" alt="Download File"/></a>`;
         }
         
+        function fetchPartInfo(partId) {
+          fetch(`/parts/${partId}`)
+          .then(response => response.json())
+          .then(part => {
+              // Open a modal and display part info
+              alert(`Name: ${part.name}\nDescription: ${part.description}`);
+          });
+        }
+        
+        fetch('/parts')
+          .then(response => response.json())
+          .then(parts => {
+              const partsList = document.getElementById('partsList');
+              parts.forEach(part => {
+                  const partItem = document.createElement('li');
+                  partItem.textContent = part.name;
+                  partItem.onclick = () => fetchPartInfo(part.id);
+                  partsList.appendChild(partItem);
+              });
+          });
+        
         document.querySelector('form').addEventListener('submit', function(e) {
           e.preventDefault();
           const formData = new FormData(this);
@@ -36,6 +57,7 @@
     </script>
 </head>
 <body>
+    <ul id="partsList"></ul>
     <form action="/submit" method="post">
         <input type="text" name="prompt" placeholder="Enter your design prompt">
         <button type="submit">Submit</button>
