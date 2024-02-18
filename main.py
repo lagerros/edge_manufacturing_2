@@ -43,8 +43,8 @@ def index():
   return render_template('index.html')
 
 
-with app.app_context():
-  createPart("sample gear", "The F-16A is a single-engine, single-seat, multirole tactical fighter with full air-to-air and air-to-surface combat capabilities. The F-16B is a two-seat (tandem) version and performs the secondary role of a trainer. The fuselage is characterized by a large bubble canopy, forebody strakes, and an under fuselage engine air inlet. The wing and tail surfaces are thin and feature moderate aft sweep. The wing has automatic leading edge flaps which enhance performance over a wide speed range. Flaperons are mounted on the trailing edge of the wing and combine the functions of flaps and ailerons. The horizontal tails have a small negative", None, None)
+# with app.app_context():
+#   createPart("231 servo", "The F-16A is a single-engine, single-seat, multirole tactical fighter with full air-to-air and air-to-surface combat capabilities. The F-16B is a two-seat (tandem) version and performs the secondary role of a trainer. The fuselage is characterized by a large bubble canopy, forebody strakes, and an under fuselage engine air inlet. The wing and tail surfaces are thin and feature moderate aft sweep. The wing has automatic leading edge flaps which enhance performance over a wide speed range. Flaperons are mounted on the trailing edge of the wing and combine the functions of flaps and ailerons. The horizontal tails have a small negative", None, None)
 
 
 @app.route('/submit', methods=['POST'])

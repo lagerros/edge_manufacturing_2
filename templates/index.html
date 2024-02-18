@@ -30,22 +30,40 @@
       }
 
       form {
+          box-sizing: border-box;
+          color: var(--font-color);
+
           margin-top: 100px;
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
       }
 
       input[type="text"] {
+          box-sizing: border-box;
+          padding: 5px;
+
           font-family: inherit;
-          padding: 10px;
-          margin-bottom: 10px;
+          height: 35px;
           width: 300px;
+          background-color: var(--background-color);
+          border: 2px solid var(--font-color);
+          margin-right: 15px
+
+      }
+
+      button[type="submit"] {
+          height: 35px;
+          font-family: inherit;
+          background-color: var(--background-color);
+          border: 2px solid var(--font-color);
+          color: var(--font-color);
       }
 
       #all-parts-link {
           margin-top: 20px;
           opacity: var(--link-opacity);
+          color: var(--font-color);
       }
 
       #all-parts-link:hover {
