@@ -158,8 +158,6 @@ def search():
     return jsonify(results_json)
 
 
-app.run(host='0.0.0.0', port=8080)
-
 @app.route('/upload_csv', methods=['POST'])
 def upload_csv():
     if 'csv_file' not in request.files:
@@ -168,9 +166,18 @@ def upload_csv():
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
     if file and file.filename.endswith('.csv'):
-        df = pd.read_csv(file)
+        df = pd.read_csv(file, keep_default_na=False)  # keep_default_na=False prevents pandas from converting empty strings to NaN
         for _, row in df.iterrows():
-            createOrUpdatePart(row['name'], row['description'], row['img_filename'], row['stl_filename'])
+            # Use .get() with a default of None for optional columns
+            createOrUpdatePart(
+                name=row.get('name'),
+                description=row.get('description', None),
+                img_filename=row.get('img_filename', None),
+                stl_filename=row.get('stl_filename', None)
+            )
         return jsonify({'message': 'CSV processed successfully'}), 200
     else:
         return jsonify({'error': 'Invalid file format'}), 400
+
+app.run(host='0.0.0.0', port=8080)
+

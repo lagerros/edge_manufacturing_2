@@ -355,6 +355,35 @@
                 .catch(error => console.error('Error:', error));
         });
 
+        document.getElementById('uploadCsvButton').addEventListener('click', function() {
+            const input = document.getElementById('csvFileInput');
+            if (!input.files.length) {
+                alert('Please select a file.');
+                return;
+            }
+            const file = input.files[0];
+            if (!file.type.match('text/csv')) {
+                alert('Please select a CSV file.');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('csv_file', file);
+
+            fetch('/upload_csv', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('CSV upload successful.');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while uploading the CSV.');
+            });
+        });
+
         
       });
   
@@ -376,10 +405,10 @@
 <body>
     
     <div id="company-name">edge</div>
-        <form action="/upload_csv" method="post" enctype="multipart/form-data">
-            <input type="file" name="csv_file" accept=".csv">
-            <button type="submit">Upload CSV</button>
-        </form>
+    <form id="csvUploadForm">
+        <input type="file" id="csvFileInput" accept=".csv">
+        <button type="button" id="uploadCsvButton">Upload CSV</button>
+    </form>
       <form action="/submit" method="post">
           <input type="text" name="prompt" placeholder="Enter your design prompt">
           <input type="file" accept="image/*" id="imageInput" name="image" capture="capture" />

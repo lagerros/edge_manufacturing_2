@@ -35,12 +35,24 @@ def updatePart(part_id, name=None, description=None, img_filename=None, stl_file
         return part
     return None
 
-def createOrUpdatePart(name, description, img_filename, stl_filename):
-    part = Part.query.filter_by(name=name).first()
-    if part:
-        updatePart(part.id, name, description, img_filename, stl_filename)
-    else:
-        createPart(name, description, img_filename, stl_filename)
+def createOrUpdatePart(name, description=None, img_filename=None, stl_filename=None):
+  part = Part.query.filter_by(name=name).first()
+  if part:
+      # Update existing part. Check for None before updating each field.
+      if name is not None:
+          part.name = name
+      if description is not None:
+          part.description = description
+      if img_filename is not None:
+          part.img_filename = img_filename
+      if stl_filename is not None:
+          part.stl_filename = stl_filename
+      db.session.commit()
+  else:
+      # Create new part. Pass None for missing fields.
+      new_part = Part(name=name, description=description, img_filename=img_filename, stl_filename=stl_filename)
+      db.session.add(new_part)
+      db.session.commit()
 
 def get_all_parts():
     return Part.query.all()
