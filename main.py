@@ -124,21 +124,25 @@ from whoosh.index import open_dir
 def search_parts(query_str):
   ix = open_dir("indexdir")
   search_results = []  # Initialize an empty list to hold the results
+  search_results = []  # Initialize an empty list to hold the results
+
   with ix.searcher() as searcher:
-    # Enhance the parser with plugins for fuzzy, wildcard, and phrase searches
-    parser = MultifieldParser(["name", "description"], schema=ix.schema, group=OrGroup)
-    parser.add_plugin(FuzzyTermPlugin())
-    parser.add_plugin(WildcardPlugin())
-    parser.add_plugin(PhrasePlugin())
+      parser = MultifieldParser(["title", "content"], schema=ix.schema, group=OrGroup)
+      parser.add_plugin(FuzzyTermPlugin())
+      parser.add_plugin(WildcardPlugin())
+      parser.add_plugin(PhrasePlugin())
 
-    # Example query that uses fuzzy search, wildcards, and phrase search
-    # Adjust the query according to your needs
-   # query_str = 'fire control~2 OR "exact phrase" OR F-16*'
-    query = parser.parse(query_str)
+      query = parser.parse(query_str)
+      results = searcher.search(query, limit=None)
 
-    # Execute the search
-    results = searcher.search(query, limit=None)
-    return results 
+      # Extract necessary data within the context manager
+      for result in results:
+          # Make sure to call .fields() to get a dictionary of the stored fields
+          result_data = result.fields()
+          search_results.append({'name': result_data["name"], 'description': result_data["description"]})
+
+  # Now search_results contains all the data needed, and can be used outside the context manager
+  return search_results
 
 
 @app.route('/search')
