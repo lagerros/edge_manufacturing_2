@@ -113,4 +113,24 @@ def get_part(part_id):
     return jsonify({'error': 'Part not found'}), 404
 
 
+from whoosh.qparser import QueryParser
+from whoosh.index import open_dir
+
+def search_parts(query_str):
+    ix = open_dir("indexdir")
+    with ix.searcher() as searcher:
+        query = QueryParser("description", ix.schema).parse(query_str)
+        results = searcher.search(query)
+        for result in results:
+            print(result['name'], result['description'])  # Or handle the result as needed
+
+@app.route('/search')
+def search():
+    query_str = request.args.get('query')
+    results = search_parts(query_str)
+    # Convert results to a list of dictionaries with 'name' and 'description'
+    results_json = [{'name': result.name, 'description': result.description} for result in results]
+    return jsonify(results_json)
+
+
 app.run(host='0.0.0.0', port=8080)

@@ -288,6 +288,39 @@
               document.getElementById('imagePreview').style.display = 'block';
           }
       });
+      
+      document.getElementById('searchForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent the form from submitting the traditional way
+    const query = document.getElementById('searchQuery').value;
+    
+        // Perform the search request
+        fetch(`/search?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                displaySearchResults(data);
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    function displaySearchResults(results) {
+        const resultsDiv = document.getElementById('searchResults');
+        resultsDiv.innerHTML = ''; // Clear previous results
+        
+        // Check if there are any results
+        if (results.length === 0) {
+            resultsDiv.innerHTML = '<p>No results found.</p>';
+            return;
+        }
+        
+        // Create a list of search results
+        const ul = document.createElement('ul');
+        results.forEach(result => {
+            const li = document.createElement('li');
+            li.textContent = `${result.name} - ${result.description}`;
+            ul.appendChild(li);
+        });
+        resultsDiv.appendChild(ul);
+    }
     </script>
 </head>
 <body>
@@ -300,6 +333,11 @@
           <button type="submit">Submit</button>
           <img id="imagePreview" style="display:none; width: 100px; height: auto;" />
       </form>
+      <form id="searchForm">
+        <input type="text" id="searchQuery" placeholder="Search parts...">
+        <button type="submit">Search</button>
+    </form>
+    <div id="searchResults"></div>
       <a href="/parts" id="all-parts-link">All parts</a>
       <div id="status"></div>
       <div id="result"></div>

@@ -35,9 +35,5 @@ def updatePart(part_id, name=None, description=None, img_filename=None, stl_file
         return part
     return None
 
-# new_model = ModelInfo(user_prompt=user_prompt, file_name=file_name, status="Completed")
-# db.session.add(new_model)
-# db.session.commit()
-
-
-# completed_models = ModelInfo.query.filter_by(status="Completed").all()
+def get_all_parts():
+    return Part.query.all()
