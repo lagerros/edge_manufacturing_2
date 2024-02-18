@@ -126,20 +126,20 @@ def search_parts(query_str):
   search_results = []  # Initialize an empty list to hold the results
   with ix.searcher() as searcher:
     # Enhance the parser with plugins for fuzzy, wildcard, and phrase searches
-    parser = MultifieldParser(["title", "content"], schema=ix.schema, group=OrGroup)
+    parser = MultifieldParser(["name", "description"], schema=ix.schema, group=OrGroup)
     parser.add_plugin(FuzzyTermPlugin())
     parser.add_plugin(WildcardPlugin())
     parser.add_plugin(PhrasePlugin())
 
     # Example query that uses fuzzy search, wildcards, and phrase search
     # Adjust the query according to your needs
-    query_str = 'fire control~2 OR "exact phrase" OR F-16*'
+   # query_str = 'fire control~2 OR "exact phrase" OR F-16*'
     query = parser.parse(query_str)
 
     # Execute the search
     results = searcher.search(query, limit=None)
-    for result in results:
-        print(result['title'], result['content'])
+    return results 
+
 
 @app.route('/search')
 def search():
