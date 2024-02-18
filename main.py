@@ -6,6 +6,7 @@ import re
 import random
 from config import ProductionConfig  # Or whichever config you want to use
 from models import Part
+import pandas as pd
 
 
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
@@ -19,7 +20,7 @@ from whoosh.index import create_in, open_dir
 from whoosh.qparser import FuzzyTermPlugin, WildcardPlugin, PhrasePlugin, PrefixPlugin, MultifieldParser, OrGroup
 
 from extensions import db
-from database import createPart
+from database import createPart, createOrUpdatePart
 
 # Create our client.
 token = os.environ["KITTYCAD_API_TOKEN"]
@@ -158,3 +159,18 @@ def search():
 
 
 app.run(host='0.0.0.0', port=8080)
+
+@app.route('/upload_csv', methods=['POST'])
+def upload_csv():
+    if 'csv_file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    file = request.files['csv_file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file and file.filename.endswith('.csv'):
+        df = pd.read_csv(file)
+        for _, row in df.iterrows():
+            createOrUpdatePart(row['name'], row['description'], row['img_filename'], row['stl_filename'])
+        return jsonify({'message': 'CSV processed successfully'}), 200
+    else:
+        return jsonify({'error': 'Invalid file format'}), 400

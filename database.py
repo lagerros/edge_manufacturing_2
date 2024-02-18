@@ -35,5 +35,12 @@ def updatePart(part_id, name=None, description=None, img_filename=None, stl_file
         return part
     return None
 
+def createOrUpdatePart(name, description, img_filename, stl_filename):
+    part = Part.query.filter_by(name=name).first()
+    if part:
+        updatePart(part.id, name, description, img_filename, stl_filename)
+    else:
+        createPart(name, description, img_filename, stl_filename)
+
 def get_all_parts():
     return Part.query.all()

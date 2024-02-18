@@ -376,6 +376,10 @@
 <body>
     
     <div id="company-name">edge</div>
+        <form action="/upload_csv" method="post" enctype="multipart/form-data">
+            <input type="file" name="csv_file" accept=".csv">
+            <button type="submit">Upload CSV</button>
+        </form>
       <form action="/submit" method="post">
           <input type="text" name="prompt" placeholder="Enter your design prompt">
           <input type="file" accept="image/*" id="imageInput" name="image" capture="capture" />
