@@ -280,6 +280,14 @@
       document.getElementById('print-button').addEventListener('click', function() {
           window.print();
       });
+      
+      document.getElementById('imageInput').addEventListener('change', function(event) {
+          const [file] = event.target.files;
+          if (file) {
+              document.getElementById('imagePreview').src = URL.createObjectURL(file);
+              document.getElementById('imagePreview').style.display = 'block';
+          }
+      });
     </script>
 </head>
 <body>
@@ -290,6 +298,7 @@
           <input type="file" accept="image/*" id="imageInput" name="image" capture="environment" style="display:none;" />
           <label for="imageInput" class="image-upload-button">Take Photo</label>
           <button type="submit">Submit</button>
+          <img id="imagePreview" style="display:none; width: 100px; height: auto;" />
       </form>
       <a href="/parts" id="all-parts-link">All parts</a>
       <div id="status"></div>
