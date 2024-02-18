@@ -15,6 +15,7 @@ from kittycad.models.file_export_format import FileExportFormat
 from kittycad.models.text_to_cad_create_body import TextToCadCreateBody
 
 from extensions import db
+from database import createPart
 
 # Create our client.
 token = os.environ["KITTYCAD_API_TOKEN"]
@@ -35,13 +36,15 @@ class ModelInfo(db.Model):
     def __repr__(self):
         return f'<ModelInfo {self.user_prompt}>'
     
-    
-    
-   # createPart("sample gear", "The F-16A is a single-engine, single-seat, multirole tactical fighter with full air-to-air and air-to-surface combat capabilities. The F-16B is a two-seat (tandem) version and performs the secondary role of a trainer. The fuselage is characterized by a large bubble canopy, forebody strakes, and an under fuselage engine air inlet. The wing and tail surfaces are thin and feature moderate aft sweep. The wing has automatic leading edge flaps which enhance performance over a wide speed range. Flaperons are mounted on the trailing edge of the wing and combine the functions of flaps and ailerons. The horizontal tails have a small negative", None, None)
+
 
 @app.route('/')
 def index():
   return render_template('index.html')
+
+
+with app.app_context():
+  createPart("sample gear", "The F-16A is a single-engine, single-seat, multirole tactical fighter with full air-to-air and air-to-surface combat capabilities. The F-16B is a two-seat (tandem) version and performs the secondary role of a trainer. The fuselage is characterized by a large bubble canopy, forebody strakes, and an under fuselage engine air inlet. The wing and tail surfaces are thin and feature moderate aft sweep. The wing has automatic leading edge flaps which enhance performance over a wide speed range. Flaperons are mounted on the trailing edge of the wing and combine the functions of flaps and ailerons. The horizontal tails have a small negative", None, None)
 
 
 @app.route('/submit', methods=['POST'])
@@ -98,6 +101,7 @@ def download_file(filename):
 def get_parts():
    parts = Part.query.with_entities(Part.id, Part.name).all()
    return jsonify([{'id': part.id, 'name': part.name} for part in parts])
+
 
 @app.route('/parts/<int:part_id>', methods=['GET'])
 def get_part(part_id):
