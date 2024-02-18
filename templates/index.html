@@ -340,8 +340,8 @@
                         alert('file is printing')
                     }
                 };
-                // xhttp.open("GET", `/print/${part.gcode_path}`, true);
-                xhttp.open("GET", '/print/square.gcode', true);
+                xhttp.open("GET", `/print/${part.gcode_path}`, true);
+             //   xhttp.open("GET", '/print/square.gcode', true);
                 xhttp.send();
             });
         }
