@@ -6,6 +6,7 @@ import re
 import random
 from config import ProductionConfig  # Or whichever config you want to use
 from models import Part
+import json
 
 
 from kittycad.api.ai import create_text_to_cad, get_text_to_cad_model_for_user
@@ -120,11 +121,18 @@ from flask_sockets import Sockets
 # app = Flask(__name__)
 sockets = Sockets(app)
 
-@sockets.route('/echo')
-def echo_socket(ws):
+@sockets.route('/search')
+def search_socket(ws):
     while not ws.closed:
-        message = ws.receive()
-        ws.send(message)
+        # Receive the search query from the client
+        query = ws.receive()
+        if query:
+            # Perform the search
+            parts = Part.query.filter(Part.name.like(f'%{query}%')).all()
+            # Prepare the data to send back
+            results = [{'id': part.id, 'name': part.name, 'description': part.description} for part in parts]
+            # Send the search results back to the client
+            ws.send(json.dumps(results))
 
 if __name__ == "__main__":
     from gevent import pywsgi

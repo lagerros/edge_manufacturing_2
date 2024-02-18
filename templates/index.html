@@ -290,7 +290,7 @@
       //     }
       // });
       
-      const socket = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/echo');
+      const socket = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/search');
 
       console.log(socket)
 
@@ -299,7 +299,13 @@
         };
 
         socket.onmessage = function(event) {
-            console.log(`Data received: ${event.data}`);
+            const parts = JSON.parse(event.data);
+            const tableBody = document.getElementById('partsTableBody');
+            tableBody.innerHTML = ''; // Clear existing rows
+            parts.forEach(part => {
+                const row = `<tr><td>${part.id}</td><td>${part.name}</td><td>${part.description}</td></tr>`;
+                tableBody.innerHTML += row;
+            });
         };
 
         socket.onclose = function(event) {
@@ -314,6 +320,10 @@
         socket.onerror = function(error) {
             console.log(`WebSocket error: ${error.message}`);
         };
+        
+        document.getElementById('searchInput').addEventListener('input', function(event) {
+            socket.send(event.target.value);
+        });
     </script>
 </head>
 <body>
@@ -326,6 +336,9 @@
           <button type="submit">Submit</button>
           <img id="imagePreview" style="display:none; width: 100px; height: auto;" />
       </form>
+      <input type="text" id="searchInput" placeholder="Search parts...">
+
+      <input type="text" id="searchInput" placeholder="Search parts...">
       <a href="/parts" id="all-parts-link">All parts</a>
       <div id="status"></div>
       <div id="result"></div>
@@ -339,7 +352,7 @@
                   <th>Download</th>
               </tr>
           </thead>
-          <tbody>
+          <tbody id="partsTableBody">
               <!-- Parts will be dynamically inserted here -->
           </tbody>
       </table>
