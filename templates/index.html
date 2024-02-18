@@ -173,6 +173,8 @@
 
       #modal-image {
           margin-right: 20px;
+          width: 350px; 
+          margin-left: 20px;
       }
 
       #modal-files {
@@ -271,36 +273,36 @@
             }
         }
         
-        fetch('/parts')
-          .then(response => response.json())
-          .then(parts => {
-              const tableBody = document.getElementById('partsTable').getElementsByTagName('tbody')[0];
-              parts.forEach(part => {
-                  const row = tableBody.insertRow();
-                  const nameCell = row.insertCell(0);
-                  const descCell = row.insertCell(1);
-                  const imgCell = row.insertCell(2);
-                  const downloadCell = row.insertCell(3);
-                  if (ADMIN_MODE) {
-                      const deleteCell = row.insertCell(-1); 
-                      deleteCell.innerHTML = '<button class="delete-btn" data-part-id="' + part.id + '">X</button>';
-                  }
+        // fetch('/parts')
+        //   .then(response => response.json())
+        //   .then(parts => {
+        //       const tableBody = document.getElementById('partsTable').getElementsByTagName('tbody')[0];
+        //       parts.forEach(part => {
+        //           const row = tableBody.insertRow();
+        //           const nameCell = row.insertCell(0);
+        //           const descCell = row.insertCell(1);
+        //           const imgCell = row.insertCell(2);
+        //           const downloadCell = row.insertCell(3);
+        //           if (ADMIN_MODE) {
+        //               const deleteCell = row.insertCell(-1); 
+        //               deleteCell.innerHTML = '<button class="delete-btn" data-part-id="' + part.id + '">X</button>';
+        //           }
 
-                  nameCell.textContent = part.name;
-                  if (part?.description) {
-                    descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
-                  }
-                  if (part?.img_filename) {
-                    imgCell.innerHTML = `<img src="/images/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
-                  }
-                  if (part?.stl_filename) {
-                    downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`
-                  }
+        //           nameCell.textContent = part.name;
+        //           if (part?.description) {
+        //             descCell.textContent = part.description.length > 50 ? part.description.substring(0, 47) + '...' : part.description;
+        //           }
+        //           if (part?.img_filename) {
+        //             imgCell.innerHTML = `<img src="/images/${part.img_filename}" alt="${part.name}" style="width:50px;height:auto;">`;
+        //           }
+        //           if (part?.stl_filename) {
+        //             downloadCell.innerHTML = `<a href="/download/${part.stl_filename}" download>Download</a>`
+        //           }
                 
-                row.addEventListener('click', () => openModal(part));
+        //         row.addEventListener('click', () => openModal(part));
                  
-              });
-          });
+        //       });
+        //   });
         
         document.querySelector('form').addEventListener('submit', function(e) {
           e.preventDefault();
@@ -321,29 +323,37 @@
         
         // Open modal function
         function openModal(part) {
+            console.log(part)
             document.getElementById('modal-title').textContent = part.name;
             document.getElementById('modal-description').textContent = part.description;
             document.getElementById('modal-image').src = `/images/${part.img_filename}`;
             let filesList = 'Files: <ul>';
+            let printButtonHTML = '';
             if (part.stl_filename) {
-                filesList += `<li>${part.stl_filename}</li>`;
+                // filesList += `<li>${part.stl_filename}</li>`;
+                printButtonHTML = '<button id="print-button">Print</button>';
+            } else {
+                // If no STL file, display "No file available" text
+                // filesList += '<li>No file available</li>';
+                printButtonHTML = '<p>No file available</p>';
             }
-            // Add more file types here if needed
             filesList += '</ul>';
-            document.getElementById('modal-files').innerHTML = filesList;
+            // document.getElementById('modal-files').innerHTML = filesList;
+            // Update the modal to either show the print button or "No file available" text
+            document.getElementById('print-button-container').innerHTML = printButtonHTML;
             document.getElementById('modal').style.display = "block";
-            document.getElementById('print-button').addEventListener('click', function() {
-                // window.print();
-                const xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && this.status == 200) {
-                        alert('file is printing')
-                    }
-                };
-                xhttp.open("GET", `/print/${part.stl_filename}`, true);
-             //   xhttp.open("GET", '/print/square.gcode', true);
-                xhttp.send();
-            });
+            if (part.stl_filename) {
+                document.getElementById('print-button').addEventListener('click', function() {
+                    const xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            alert('file is printing')
+                        }
+                    };
+                    xhttp.open("GET", `/print/${part.stl_filename}`, true);
+                    xhttp.send();
+                });
+            }
         }
 
         // Close modal when the user clicks on <span> (x)
@@ -481,11 +491,15 @@
             <span class="close-button">&times;</span>
             <h2 id="modal-title">Part Title</h2>
             <div class="modal-body">
-                <img id="modal-image" src="" alt="Part Image" style="width:100px; height:auto;">
                 <p id="modal-description">Part Description</p>
+                <img id="modal-image" src="" alt="Part Image" style="width:100px; height:auto;">
+                
             </div>
-            <div id="modal-files">Files:</div>
+          <!-- <div id="modal-files">Files:</div> -->
+          <div id="print-button-container"> 
             <button id="print-button">Print</button>
+          </div> 
+            
         </div>
       </div>
       <!-- <div id="partsTableContainer">

@@ -22,9 +22,9 @@ from extensions import db
 from database import createPart, createOrUpdatePart, deletePart
 
 # Create our client.
-token = os.environ["KITTYCAD_API_TOKEN"]
+# token = os.environ["KITTYCAD_API_TOKEN"]
 
-client = ClientFromEnv(token=token, timeout=30, verify_ssl=True)
+# client = ClientFromEnv(token=token, timeout=30, verify_ssl=True)
 
 app = Flask('app')
 app.config.from_object(ProductionConfig)
