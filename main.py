@@ -29,8 +29,8 @@ from database import createPart, createOrUpdatePart, deletePart
 
 app = Flask('app')
 app.config.from_object(ProductionConfig)
-app.config['OCTOPRINT_API_KEY'] = 'F789415192EB43EE97C6029CD46FDCB1'
-app.config['OCTOPRINT_URL'] = 'http://localhost'
+app.config['OCTOPRINT_API_KEY'] = os.environ.get('OCTOPRINT_API_KEY', '')
+app.config['OCTOPRINT_URL'] = os.environ.get('OCTOPRINT_URL', 'http://localhost')
 
 db.init_app(app)
 
